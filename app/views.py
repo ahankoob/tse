@@ -16,6 +16,7 @@ from ta import add_all_ta_features
 from ta.utils import dropna
 import ta.trend
 from .supRes import subRes
+from .classes.symbolPack import symbolPack
 def index(request):
     
         
@@ -98,14 +99,6 @@ def tickersImportFromCsv(request,sid):
 def tickersFromTseSite(request):
     return HttpResponse(functions.prepareTickers())
 
-def ticker(request,sid):
-        
-    DIRNAME = os.path.dirname(__file__)
-    with open(DIRNAME +'/static/symbols_name.json',encoding='utf-8') as f:
-        tickers = json.load(f)    
-        context = {'tickers': tickers,'ticker_id':sid}
-        return render(request,'tciker.html',context)
-
 def importFastData(request):
     symbols_list = symbols.objects.filter(symbolActive=True)
     outputStr = ''
@@ -159,6 +152,15 @@ def myTechnical(request):
         
     return HttpResponse(returnStr)
  
+
+def getHistory(request,sid):
+        
+    symbolObj = symbols.objects.filter(pk = int(sid)).first()
+    smbPack = symbolPack(symbolObj)
+    if smbPack.get_history_from_tse()==True:
+        return HttpResponse(f"{symbolObj.symbolName} Get Ok")
+    else:
+        return HttpResponse(f"{symbolObj.symbolName} Get Error")
 
 
 

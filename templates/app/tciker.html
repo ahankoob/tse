@@ -1,0 +1,14 @@
+<html>
+<head>
+</head>
+<body dir="rtl">
+
+
+{% block title %}
+{% for ticker in tickers.items %}
+    {% if ticker.1 == ticker_id %}
+    	<p>{{ ticker.0}} ==>> {{ ticker.1}} </p>
+    {% endif %}
+{% endfor %}
+{%endblock%}
+</body>
