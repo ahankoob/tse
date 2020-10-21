@@ -1,0 +1,8 @@
+date,individual_buy_count,corporate_buy_count,individual_sell_count,corporate_sell_count,individual_buy_vol,corporate_buy_vol,individual_sell_vol,corporate_sell_vol,individual_buy_value,corporate_buy_value,individual_sell_value,corporate_sell_value,individual_buy_mean_price,individual_sell_mean_price,corporate_buy_mean_price,corporate_sell_mean_price,individual_ownership_change
+2020-05-16,0,1,0,1,0,8700,0,8700,0,1518097800,0,1518097800,,,174494.0,174494.0,0.0
+2020-04-26,0,1,0,1,0,1000,0,1000,0,163500000,0,163500000,,,163500.0,163500.0,0.0
+2020-03-11,0,1,0,1,0,20000,0,20000,0,3268040000,0,3268040000,,,163402.0,163402.0,0.0
+2020-03-10,0,1,0,1,0,1700,0,1700,0,277893900,0,277893900,,,163467.0,163467.0,0.0
+2020-03-09,0,1,0,1,0,18300,0,18300,0,2977556400,0,2977556400,,,162708.0,162708.0,0.0
+2020-03-01,0,1,0,1,0,1000,0,1000,0,162700000,0,162700000,,,162700.0,162700.0,0.0
+2018-04-18,0,3,0,3,0,3000,0,3000,0,360000000,0,360000000,,,120000.0,120000.0,0.0

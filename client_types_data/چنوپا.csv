@@ -1,0 +1,5 @@
+date,individual_buy_count,corporate_buy_count,individual_sell_count,corporate_sell_count,individual_buy_vol,corporate_buy_vol,individual_sell_vol,corporate_sell_vol,individual_buy_value,corporate_buy_value,individual_sell_value,corporate_sell_value,individual_buy_mean_price,individual_sell_mean_price,corporate_buy_mean_price,corporate_sell_mean_price,individual_ownership_change
+2018-10-03,1,0,1,0,1000,0,1000,0,75000,0,75000,0,75.0,75.0,,,0.0
+2017-05-15,1,0,1,0,2664,0,2664,0,516816,0,516816,0,194.0,194.0,,,0.0
+2015-12-23,1,0,1,0,2664,0,2664,0,1537128,0,1537128,0,577.0,577.0,,,0.0
+2014-09-07,1,0,1,0,666,0,666,0,1998000,0,1998000,0,3000.0,3000.0,,,0.0

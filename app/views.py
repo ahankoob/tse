@@ -10,18 +10,14 @@ from .models import prices
 import dateutil.parser
 import requests
 from . import functions
-from .technical import technical
-from .technical_pandata import technical_pandasta
-from ta import add_all_ta_features
-from ta.utils import dropna
-import ta.trend
-from .supRes import subRes
+from .analyze.technical import technical
+from .analyze.supports import supports
+from .analyze.prepareSymbol import prepareSymbol
 from .classes.symbolPack import symbolPack
 def index(request):
     
         
     return HttpResponse('hi')
-
 def tickersFromJsonFile(request):
     
     DIRNAME = os.path.dirname(__file__)
@@ -98,69 +94,39 @@ def tickersImportFromCsv(request,sid):
         return HttpResponse('!!!!!!!')
 def tickersFromTseSite(request):
     return HttpResponse(functions.prepareTickers())
-
-def importFastData(request):
-    symbols_list = symbols.objects.filter(symbolActive=True)
+def importFastData(request,sid):
     outputStr = ''
     responseText = {}
-    for item in  symbols_list:
-        # if(item.symbolName!='فولاد'):
-        #     continue
-        fastUrl = 'http://www.tsetmc.com/tsev2/data/instinfofast.aspx?i={}&c=57+'.format(item.symbolID)
-        data = {}
-        responseText.update({str(item.pk):str(requests.get(fastUrl, data=data).content).replace('b\'','').replace('b"','')})
+    symbolObj = symbols.objects.filter(pk = int(sid)).first()
+    fastUrl = 'http://www.tsetmc.com/tsev2/data/instinfofast.aspx?i={}&c=57+'.format(symbolObj.symbolID)
+    data = {}
+    responseText.update({str(symbolObj.pk):str(requests.get(fastUrl, data=data).content).replace('b\'','').replace('b"','')})
     for id,resItem in responseText.items(): 
             outputStr+= functions.importSymbolFastData(int(id),resItem)
     return HttpResponse(outputStr)
+def myTechnical(request,sid):
+    symbolObj = symbols.objects.filter(pk = int(sid)).first()
+    prepare = prepareSymbol(symbolObj)
+    technicalItem = technical(prepare)
+    supportlItem = supports(prepare)
 
-def myTechnical(request):
-    symbol_list = symbols.objects.filter(symbolActive=True)
-    Technical_list = list()
-    for i in symbol_list:
-        Technical_list.append(technical_pandasta(i))
     returnStr=""
-    index=0
-    for technicalItem in Technical_list:
-        #try:
-        index+=1
-        # if index<50:
-        #     continue
-        # elif index == 100 :
-        #     break
-        
-        
-
-
-        technicalItem.dataRead()
-        technicalItem.supportRessists()
-        mySubRes = subRes(technicalItem.supports,technicalItem.ressists,technicalItem.indexes,technicalItem.df,technicalItem.symbol)
-        if(mySubRes.BuySignal() or mySubRes.SellSignal()):
-            technicalItem.check()
-            if technicalItem.BUYPoint>=10:
-                returnStr+="{} : {}>>> Curr:{} S:{},R:{}<br>".format(technicalItem.symbol,'BUY',technicalItem.df.loc[technicalItem.indexes[len(technicalItem.indexes)-1]]['close'],mySubRes.supports[0][0],mySubRes.ressists[0][0])
-            elif(technicalItem.SELLPoint>=10):
-                returnStr+="{} : {}>>> Curr:{} S:{},R:{}<br>".format(technicalItem.symbol,'Sell',technicalItem.df.loc[technicalItem.indexes[len(technicalItem.indexes)-1]]['close'],mySubRes.supports[0][0],mySubRes.ressists[0][0])
-        #technicalItem.check()
-        # if technicalItem.BUYPoint>0 or technicalItem.SELLPoint>0:
-        #     if technicalItem.BUYPoint>=10:
-        #         returnStr+="{} : {} <br>".format(technicalItem.symbol,"Buy")
-        #     if technicalItem.SELLPoint>=10:
-        #         returnStr+="{} : {} <br>".format(technicalItem.symbol,"Sell")
-        # returnStr+="{} : {} <br>".format(technicalItem.symbol,technicalItem.df)
-        # except:
-        #     returnStr+="{} : {} <br>".format(technicalItem.symbol,"Error")
-        
+    returnStr+="<br>{}({}) -><br><pre>\t technical:<br>\t\t BUY:{}<br> \t\t SELL:{} <br> \t supports:<br>\t\t BUY:{} <br>\t\t SELL:{}</pre>".format(symbolObj.symbolName,str(symbolObj.pk),str(technicalItem.BUYPoint),str(technicalItem.SELLPoint),str(supportlItem.BUYPoint),str(supportlItem.SELLPoint))
     return HttpResponse(returnStr)
- 
-
 def getHistory(request,sid):
         
     symbolObj = symbols.objects.filter(pk = int(sid)).first()
     smbPack = symbolPack(symbolObj)
-    if smbPack.get_history_from_tse()==True:
-        return HttpResponse(f"{symbolObj.symbolName} Get Ok")
-    else:
-        return HttpResponse(f"{symbolObj.symbolName} Get Error")
+    
+    return HttpResponse(symbolObj.symbolName+"( "+str(symbolObj.pk)+" ) " +smbPack.get_from_csv())
+def symbolsJson(request):
+    return HttpResponse(functions.prepareTickersJson(), content_type="application/json")
+def symbolsCheckActive(request):
+    symbolObj = symbols.objects.all()
+    for item in  symbolObj:
+        smbPack = symbolPack(item)
+        smbPack.checkActive()
+    return HttpResponse('Done!')
 
 
 
