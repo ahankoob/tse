@@ -15,7 +15,26 @@ class symbols(models.Model):
     #                     )
     def __str__(self):
         return self.symbolName
+class symbols_info(models.Model):
+    symbol_id = models.ForeignKey(symbols, on_delete=models.CASCADE)
+    date = models.DateTimeField()
+    groupName = models.CharField(max_length= 50)
+    baseVol = models.DecimalField(max_digits=16, decimal_places=1,default=0)
+    eps = models.DecimalField(max_digits=8, decimal_places=1,default=0)
+    sahamCount = models.DecimalField(max_digits=15, decimal_places=0,default=0)
+    minValidPrice =models.DecimalField(max_digits=15, decimal_places=0,default=0)
+    maxValidPrice = models.DecimalField(max_digits=15, decimal_places=0,default=0)
+    MinWeek = models.DecimalField(max_digits=15, decimal_places=0,default=0)
+    MaxWeek =models.DecimalField(max_digits=15, decimal_places=0,default=0)
+    MinYear = models.DecimalField(max_digits=15, decimal_places=0,default=0)
+    MaxYear = models.DecimalField(max_digits=15, decimal_places=0,default=0)
+    monthlyAvgVol = models.DecimalField(max_digits=15, decimal_places=0,default=0)
+    group_pe =models.DecimalField(max_digits=8, decimal_places=1,default=0)
+    pe = models.DecimalField(max_digits=8, decimal_places=1,default=0)
+    shenavar = models.IntegerField(default=0)
+
     
+
 class prices(models.Model):
     symbol_id = models.ForeignKey(symbols, on_delete=models.CASCADE)
     priceDate = models.DateTimeField()

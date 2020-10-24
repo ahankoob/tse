@@ -13,7 +13,11 @@ from . import functions
 from .analyze.technical import technical
 from .analyze.supports import supports
 from .analyze.prepareSymbol import prepareSymbol
+from .analyze.clientsType import clientsType
 from .classes.symbolPack import symbolPack
+import functools
+import os
+import re
 def index(request):
     
         
@@ -96,22 +100,20 @@ def tickersFromTseSite(request):
     return HttpResponse(functions.prepareTickers())
 def importFastData(request,sid):
     outputStr = ''
-    responseText = {}
-    symbolObj = symbols.objects.filter(pk = int(sid)).first()
-    fastUrl = 'http://www.tsetmc.com/tsev2/data/instinfofast.aspx?i={}&c=57+'.format(symbolObj.symbolID)
-    data = {}
-    responseText.update({str(symbolObj.pk):str(requests.get(fastUrl, data=data).content).replace('b\'','').replace('b"','')})
-    for id,resItem in responseText.items(): 
-            outputStr+= functions.importSymbolFastData(int(id),resItem)
+    
+    outputStr+= functions.importSymbolFastData(sid)
     return HttpResponse(outputStr)
 def myTechnical(request,sid):
     symbolObj = symbols.objects.filter(pk = int(sid)).first()
     prepare = prepareSymbol(symbolObj)
     technicalItem = technical(prepare)
     supportlItem = supports(prepare)
-
+    clientsItem = clientsType(prepare)
+    
     returnStr=""
-    returnStr+="<br>{}({}) -><br><pre>\t technical:<br>\t\t BUY:{}<br> \t\t SELL:{} <br> \t supports:<br>\t\t BUY:{} <br>\t\t SELL:{}</pre>".format(symbolObj.symbolName,str(symbolObj.pk),str(technicalItem.BUYPoint),str(technicalItem.SELLPoint),str(supportlItem.BUYPoint),str(supportlItem.SELLPoint))
+    # returnStr = symbolObj.symbolName+":"+str(clientsItem.BUYPoint)
+    if(len(technicalItem.BUYPoint)  or len(technicalItem.SELLPoint) or len(supportlItem.BUYPoint) or len(supportlItem.SELLPoint) or len(clientsItem.BUYPoint) or len(clientsItem.SELLPoint)  ):
+        returnStr+="<br>{}({}) -><br><pre>\t تحلیل تکنیکال:<br>\t\t خرید:{}<br> \t\t فروش:{} <br> \t حمایت و مقاومت:<br>\t\t خرید:{} <br>\t\t فروش:{} <br> \t اطلاعات خریداران:<br>\t\t خرید:{} <br>\t\t فروش:{}</pre>".format(symbolObj.symbolName,str(symbolObj.pk),str(technicalItem.BUYPoint),str(technicalItem.SELLPoint),str(supportlItem.BUYPoint),str(supportlItem.SELLPoint),str(clientsItem.BUYPoint),str(clientsItem.SELLPoint))
     return HttpResponse(returnStr)
 def getHistory(request,sid):
         

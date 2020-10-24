@@ -22,9 +22,10 @@ class technical(object):
         self.smaSignal()
         self.macdSignal()
         self.rsiSignal()
+        
     def smaSignal(self):
         # try:
-        if(len(self.prepare.indexes)>5):
+        if(len(self.prepare.indexes)>=5):
             Diffrnces = []
             Diffrnces.append( self.prepare.indexes[len(self.prepare.indexes)-1]) #TODAY
             Diffrnces.append( self.prepare.indexes[len(self.prepare.indexes)-2]) 
@@ -37,16 +38,16 @@ class technical(object):
             samShort = ta.sma(self.prepare.df["close"], length=10)
             samLong = ta.sma(self.prepare.df["close"], length=20)
             
-            if (samShort[Diffrnces[0]] - samLong[Diffrnces[0]] >0 and samShort[Diffrnces[1]] - samLong[Diffrnces[1]] <=0 and samShort[Diffrnces[2]] - samLong[Diffrnces[2]] <0 and samShort[Diffrnces[3]] - samLong[Diffrnces[3]]<0 and samShort[Diffrnces[4]] - samLong[Diffrnces[4]]<0 ) :
+            if (samShort.loc[Diffrnces[0]] - samLong.loc[Diffrnces[0]] >0 and samShort.loc[Diffrnces[1]] - samLong.loc[Diffrnces[1]] >=0 and samShort.loc[Diffrnces[2]] - samLong.loc[Diffrnces[2]] <0 and samShort.loc[Diffrnces[3]] - samLong.loc[Diffrnces[3]]<0 and samShort.loc[Diffrnces[4]] - samLong.loc[Diffrnces[4]]<0 ) :
                 self.BUYPoint.append('SMA')
-            elif (samShort[Diffrnces[0]] - samLong[Diffrnces[0]] <=0 and samShort[Diffrnces[1]] - samLong[Diffrnces[1]] >0 ) : 
+            elif (samShort.loc[Diffrnces[0]] - samLong.loc[Diffrnces[0]] <=0 and samShort.loc[Diffrnces[1]] - samLong.loc[Diffrnces[1]] >0 ) : 
                 self.SELLPoint.append('SMA')
             return True
         # except:
         #     return False
     def macdSignal(self):
         # try:
-        if(len(self.prepare.indexes)>5):
+        if(len(self.prepare.indexes)>=5):
             Diffrnces = []
             Diffrnces.append( self.prepare.indexes[len(self.prepare.indexes)-1]) #TODAY
             Diffrnces.append( self.prepare.indexes[len(self.prepare.indexes)-2]) 
@@ -55,24 +56,24 @@ class technical(object):
             Diffrnces.append( self.prepare.indexes[len(self.prepare.indexes)-5]) 
             
             #[indicator_bb.size-2] 
-            macdObj = ta.macd(self.prepare.df["close"], fast=8,slow=21)
-            if (macdObj.loc[Diffrnces[0]].MACD_8_21_9 - macdObj.loc[Diffrnces[0]].MACDs_8_21_9 >0 and macdObj.loc[Diffrnces[1]].MACD_8_21_9 - macdObj.loc[Diffrnces[1]].MACDs_8_21_9 >=0 and macdObj.loc[Diffrnces[2]].MACD_8_21_9 - macdObj.loc[Diffrnces[2]].MACDs_8_21_9 <0 and macdObj.loc[Diffrnces[3]].MACD_8_21_9 - macdObj.loc[Diffrnces[3]].MACDs_8_21_9<0 and macdObj.loc[Diffrnces[4]].MACD_8_21_9 - macdObj.loc[Diffrnces[4]].MACDs_8_21_9<0 ) :
+            macdObj = ta.macd(self.prepare.df["close"], fast=12,slow=26,length=9)
+            if (macdObj.loc[Diffrnces[0]].MACD_12_26_9 - macdObj.loc[Diffrnces[0]].MACDs_12_26_9 >0 and macdObj.loc[Diffrnces[1]].MACD_12_26_9 - macdObj.loc[Diffrnces[1]].MACDs_12_26_9 >=0 and macdObj.loc[Diffrnces[2]].MACD_12_26_9 - macdObj.loc[Diffrnces[2]].MACDs_12_26_9 <0 and macdObj.loc[Diffrnces[3]].MACD_12_26_9 - macdObj.loc[Diffrnces[3]].MACDs_12_26_9<0 and macdObj.loc[Diffrnces[4]].MACD_12_26_9 - macdObj.loc[Diffrnces[4]].MACDs_12_26_9<0 ) :
                 self.BUYPoint.append('MACD')
-            elif (macdObj.loc[Diffrnces[0]].MACD_8_21_9 - macdObj.loc[Diffrnces[0]].MACDs_8_21_9 <=0 and macdObj.loc[Diffrnces[1]].MACD_8_21_9 - macdObj.loc[Diffrnces[1]].MACDs_8_21_9 >0 ) : 
+            elif (macdObj.loc[Diffrnces[0]].MACD_12_26_9 - macdObj.loc[Diffrnces[0]].MACDs_12_26_9 <=0 and macdObj.loc[Diffrnces[1]].MACD_12_26_9 - macdObj.loc[Diffrnces[1]].MACDs_12_26_9 >0 ) : 
                 self.SELLPoint.append('MACD')
             return True
         # except:
         #     return False    
     def rsiSignal(self):
-        indicator_rsi = ta.rsi(close=self.prepare.df["close"])
+        indicator_rsi = ta.rsi(close=self.prepare.df["close"],length=14)
         # try:
-        if(len(self.prepare.indexes)>5):
+        if(len(self.prepare.indexes)>=5):
             Diffrnces = []
             Diffrnces.append( self.prepare.indexes[len(self.prepare.indexes)-1]) #TODAY
             Diffrnces.append( self.prepare.indexes[len(self.prepare.indexes)-2]) 
-            if (indicator_rsi[Diffrnces[0]]>=30 and indicator_rsi[Diffrnces[1]]<=30):
+            if (indicator_rsi.loc[Diffrnces[0]]>=30 and indicator_rsi.loc[Diffrnces[1]]<=30):
                 self.BUYPoint.append('RSI')
-            elif (indicator_rsi[Diffrnces[1]]>=70 and indicator_rsi[Diffrnces[0]]<=70 ):
+            elif (indicator_rsi.loc[Diffrnces[1]]>=70 and indicator_rsi.loc[Diffrnces[0]]<=70 ):
                 self.SELLPoint.append('RSI')
             return True
         # except :
@@ -80,13 +81,13 @@ class technical(object):
     def cciSignal(self):
         indicator_cci = ta.cci(high=self.prepare.df["high"],low=self.prepare.df["low"],close=self.prepare.df["close"])
         # try:
-        if(len(self.prepare.indexes)>5):
+        if(len(self.prepare.indexes)>=5):
             Diffrnces = []
             Diffrnces.append( self.prepare.indexes[len(self.prepare.indexes)-1]) #TODAY
             Diffrnces.append( self.prepare.indexes[len(self.prepare.indexes)-2]) 
-            if (indicator_cci[Diffrnces[0]]>=30 and indicator_cci[Diffrnces[1]]<=30):
+            if (indicator_cci.loc[Diffrnces[0]]>=30 and indicator_cci.loc[Diffrnces[1]]<=30):
                 self.BUYPoint.append('CCI')
-            elif (indicator_cci[Diffrnces[1]]>=70 and indicator_cci[Diffrnces[0]]<=70 ):
+            elif (indicator_cci.loc[Diffrnces[1]]>=70 and indicator_cci.loc[Diffrnces[0]]<=70 ):
                 self.SELLPoint.append('CCI')
             return True
         # except :
